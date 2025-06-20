@@ -1,0 +1,54 @@
+model = createpde();
+
+% 영역 설정
+R = [3,4, -3,20,20,-3,0,0,23,23]';
+R1 = [3,4,3.25,3.35,3.35,3.25,0,0,5,5]';
+S = [1; 0; 1; 0.1; 0; 0; 0; 0; 0; 0];
+
+gd = [R, R1, S];
+ns = char('R','R1','S')';
+sf = 'R-R1-S';
+g = decsg(gd, sf, ns);
+geometryFromEdges(model, g);
+
+% PDE 설정
+f = 1000; c = 343;
+k = 2*pi*f/c;
+specifyCoefficients(model, 'm',0, 'd',0, 'c',1, 'a', -k^2, 'f',0);
+
+% 경계조건
+nonreflective_edge = [1, 2, 3, 7]
+source_edge = [9 10 11 12]
+applyBoundaryCondition(model, 'neumann', 'Edge', nonreflective_edge, 'g',0, 'q', -1i*k);
+applyBoundaryCondition(model, 'dirichlet', 'Edge', source_edge, 'u', 0.2);  
+
+% 메시 및 해석 
+generateMesh(model, 'Hmax', 0.1);
+result1 = solvepde(model);
+P = result1.NodalSolution;
+Pref = 2*10^(-5);
+P_dB = 20 * log10(abs(P) / Pref + eps);
+
+% 시각화
+figure;
+pdeplot(model, 'XYData', P_dB, 'Mesh', 'off');
+title('Sound Pressure Level (dB)');
+xlabel('x (m)'); ylabel('y (m)');
+cmap = turbo(256);
+new_cmap = cmap(70:256, :);   
+colormap(new_cmap);  
+clim([0 100]);
+
+%(10,3)지점에서의 데시벨
+nodes = result1.Mesh.Nodes;
+X = nodes(1,:)';
+Y = nodes(2,:)';
+
+mask = (X>= 9.2) & (X<= 10.3) & ...
+       (Y>= 1.2) & (Y<= 2.3);
+V1 = mean(P_dB(mask));
+  
+
+a1 = interpolateSolution(result1, [10; 3]);
+b1= 20 * log10(abs(a1) / Pref + eps);
+

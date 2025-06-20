@@ -1,23 +1,20 @@
 model = createpde();
 
-% ----- 기본 도형 정의 -----
+% 영역 설정
 R = [3,4, -3,20,20,-3,0,0,23,23]';                                                        
 S = [1; 0; 1; 0.1; 0; 0; 0; 0; 0; 0];          
 R0 = [3,4,3.25,3.35,3.35,3.25,0,0,3,3]';  
 
 
-% ----- 고리 구조 파라미터 -----
 cx = 0.8; cy = 3;
 r_outer = 2.55;
 r_inner = r_outer - 0.1;
 N = 10;
 theta = linspace(0,acos(1.5/2.5), N+1);
 
-% ----- 도형 및 이름 공간 초기화 -----
 gd = R0;
 ns_cell = {'R0'};  
 
-% ----- 고리 세그먼트 생성 -----
 for i = 1:N
     th1 = theta(i);
     th2 = theta(i+1);
@@ -48,13 +45,12 @@ g = decsg(gd, sf, ns);
 geometryFromEdges(model, g);
 
 
-
-% ---------- 2. 물리계수 설정 ----------
+% PDE 설정
 f = 1000; c = 343;
 k = 2*pi*f/c;
 specifyCoefficients(model, 'm',0, 'd',0, 'c',1, 'a',-k^2, 'f',0);
 
-% ---------- 3. 경계조건 ----------
+% 경계조건
 applyBoundaryCondition(model, 'neumann', 'Edge', [24,25,26,27], 'g',0, 'q',-1i*k);
 applyBoundaryCondition(model, 'dirichlet', 'Edge', [29 30 31 32], 'u', 0.2);  
 

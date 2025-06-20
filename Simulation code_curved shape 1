@@ -5,18 +5,15 @@ S = [1; 0; 1; 0.1; 0; 0; 0; 0; 0; 0];
 R0 = [3,4,3.25,3.35,3.35,3.25,0,0,3,3]';  
 
 
-% ----- 고리 구조 파라미터 -----
 cx = -0.9; cy = 3;
 r_outer = 4.25;
 r_inner = r_outer - 0.1;
 N = 10;
 theta = linspace(0,pi/7, N+1);
 
-% ----- 도형 및 이름 공간 초기화 -----
 gd = R0;
-ns_cell = {'R0'};   % 반드시 char로 구성된 셀 배열
+ns_cell = {'R0'};   
 
-% ----- 고리 세그먼트 생성 -----
 for i = 1:N
     th1 = theta(i);
     th2 = theta(i+1);
@@ -48,17 +45,17 @@ geometryFromEdges(model, g);
 
 
 
-% ---------- 2. 물리계수 설정 ----------
+% PDE 설정
 f = 1000; c = 343;
 k = 2*pi*f/c;
 specifyCoefficients(model, 'm',0, 'd',0, 'c',1, 'a',-k^2, 'f',0);
 
-% ---------- 3. 경계조건 ----------
+% 경계조건
 applyBoundaryCondition(model, 'neumann', 'Edge', [24,25,26,27], 'g',0, 'q',-1i*k);
 applyBoundaryCondition(model, 'dirichlet', 'Edge', [29 30 31 32], 'u', 0.2);  
 
 % 메시 및 해석 
-generateMesh(model, 'Hmax', 0.1);
+generateMesh(model, 'Hmax', 0.03);
 result3 = solvepde(model);
 P = result3.NodalSolution;
 Pref = 2*10^(-5);

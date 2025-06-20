@@ -20,7 +20,7 @@ applyBoundaryCondition(model, 'neumann','Edge', [1,2,3,9], 'g',0, 'q',-1i*k );
 applyBoundaryCondition(model, 'dirichlet', 'Edge', [13 14 15 16], 'u', 0.2);
 
 % 메시 및 해석 
-generateMesh(model, 'Hmax', 0.1);
+generateMesh(model, 'Hmax', 0.03);
 result2 = solvepde(model);
 P = result2.NodalSolution;
 Pref = 2*10^(-5);
@@ -33,7 +33,7 @@ pdeplot(model, 'XYData', P_dB, 'Mesh', 'off');
 title('Sound Pressure Level (dB)');
 xlabel('x (m)'); ylabel('y (m)');
 cmap = turbo(256);
-new_cmap = cmap(100:256, :);   
+new_cmap = cmap(70:256, :);   
 colormap(new_cmap);  
 clim([0 100]);
 

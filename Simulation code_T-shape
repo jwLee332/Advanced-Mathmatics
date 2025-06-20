@@ -47,6 +47,4 @@ mask = (X>= 9.2) & (X<= 10.3) & ...
 
 V2 = mean(P_dB(mask));
 
-a2 = interpolateSolution(result2, [10; 3]);
-b2= 20 * log10(abs(a2) / Pref + eps);
 

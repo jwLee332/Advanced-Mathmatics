@@ -23,7 +23,7 @@ applyBoundaryCondition(model, 'neumann', 'Edge', nonreflective_edge, 'g',0, 'q',
 applyBoundaryCondition(model, 'dirichlet', 'Edge', source_edge, 'u', 0.2);  
 
 % 메시 및 해석 
-generateMesh(model, 'Hmax', 0.1);
+generateMesh(model, 'Hmax', 0.03);
 result1 = solvepde(model);
 P = result1.NodalSolution;
 Pref = 2*10^(-5);
